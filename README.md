@@ -1,12 +1,32 @@
-# I2A2
+# I2A2 – Curso de Agentes Autônomos
 
-Esse repositório é destinado ao curso da I2A2 de agentes autonônomos.
+Repositório destinado ao curso da **I2A2** sobre agentes autônomos.  
+Cada pasta contém atividades diferentes propostas ao longo do curso.
 
-Em cada pasta estará as diferentes atividades criadas para o curso
+---
 
+## 📁 Organização
 
-# Atividade obrigatória - 18/jun
-Framework utilizado: N8N
+- As atividades estão separadas por pastas, conforme sua ordem no curso.
+- Cada atividade pode conter fluxos, scripts ou documentação auxiliar.
 
-Para importar o projeto, basta importar o json dentro de um novo workflow no N8N
-Em seguida, efetue as devidas configurações de conexões e chaves de API
+---
+
+## ✅ Atividade Obrigatória – 18 de Junho
+
+**Framework utilizado:** [n8n](https://n8n.io/)
+
+### 📥 Como importar o projeto:
+
+1. No n8n, crie um novo workflow.
+2. Importe o arquivo JSON fornecido.
+3. Configure as conexões e credenciais necessárias:
+   - Conexão com MongoDB (se aplicável)
+   - Chaves de API utilizadas no fluxo
+   - Outros serviços externos (ex: OpenAI)
+
+---
+
+## 🔗 Link do repositório original
+
+[https://github.com/vcdanjos/i2a2](https://github.com/vcdanjos/i2a2)
