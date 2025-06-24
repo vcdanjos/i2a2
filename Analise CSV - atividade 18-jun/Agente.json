@@ -1,0 +1,682 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "=Você é um assistente inteligente que responde perguntas consultando uma base de dados MongoDB via agregações (MongoDBAggregate).\n\nA base contém registros detalhados de notas fiscais, incluindo campos como:\n- Chave da nota\n- Produtos (quantidade, valor, descrição)\n- Emitente (CNPJ, razão social, município, UF)\n- Destinatário\n- Data de emissão\n- Valor total da nota (detalhes.valorNota)\n\nSuas responsabilidades:\nResponder perguntas somente com base nos dados disponíveis no MongoDB.\nUtilizar pipelines de agregação para obter os dados corretos.\nQuando aplicável, realizar:\n- Somatórios, médias e contagens\n- Ordenações (ex: top 3 maiores valores)\n- Comparações entre períodos, emitentes, produtos, etc.\nRetornar a resposta em linguagem clara e objetiva, com números e insights relevantes.\n\nExemplos de perguntas esperadas:\n- Qual fornecedor recebeu o maior valor total?\n- Qual item foi entregue em maior quantidade?\n- Quantas notas fiscais existem por mês?\n- Qual o valor médio por item?\n- Qual o total movimentado em 2024?\n\nImportante:\nCaso algum dado necessário esteja ausente ou ambíguo, solicite ao usuário uma especificação ou confirmação."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          -1860,
+          -1820
+        ],
+        "id": "0ebe5ae0-5452-447c-89e7-ec063755a4d8",
+        "name": "AI Agent",
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4o-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -1960,
+          -1600
+        ],
+        "id": "8161806f-4c58-40ac-8f11-0dda4a026c10",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "9dykGfVD3rht5X81",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -2200,
+          -1160
+        ],
+        "id": "81c8415d-61cd-410e-bbca-bcd56fdcd83b",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Essa ferramenta permite encontrar dados no banco de dados mongoDB de acordo com as perguntas do usuários.\n\nA estrutura dos dados é:\n{\n  \"_id\": {\n    \"$oid\": \"684c76c00f308051b21ab46a\"\n  },\n  \"chave\": \"41240105360051000148550010000010821576569133\",\n  \"modelo\": \"55 - NF-E EMITIDA EM SUBSTITUIÇÃO AO MODELO 1 OU 1A\",\n  \"serie\": \"1\",\n  \"numero\": \"1082\",\n  \"naturezaOperacao\": \"Remessa\",\n  \"dataEmissao\": {\n    \"$date\": \"2024-01-17T13:54:04.000Z\"\n  },\n  \"eventoMaisRecente\": \"Autorização de Uso\",\n  \"dataHoraEventoMaisRecente\": \"2024-01-17 10:54:22\",\n  \"emitente\": {\n    \"cnpj\": \"05360051000148\",\n    \"razaoSocial\": \"TERRA SUL EDITORA LTDA\",\n    \"ie\": \"9045325501\",\n    \"uf\": \"PR\",\n    \"municipio\": \"CURITIBA\"\n  },\n  \"destinatario\": {\n    \"cnpj\": \"378257000181\",\n    \"nome\": \"FUNDO NACIONAL DE DESENVOLVIMENTO DA EDUCACAO\",\n    \"uf\": \"DF\",\n    \"indicadorIe\": \"NÃO CONTRIBUINTE\"\n  },\n  \"detalhes\": {\n    \"destinoOperacao\": \"2 - OPERAÇÃO INTERESTADUAL\",\n    \"consumidorFinal\": \"1 - CONSUMIDOR FINAL\",\n    \"presencaComprador\": \"9 - OPERAÇÃO NÃO PRESENCIAL, OUTROS\",\n    \"valorNota\": 994.2\n  },\n  \"produtos\": [\n    {\n      \"numeroProduto\": \"1\",\n      \"descricao\": \"Geografia 4 - Coleção Gosto de Saber\",\n      \"ncm\": \"49019900\",\n      \"tipoProduto\": \"Outros livros, brochuras e impressos semelhantes\",\n      \"cfop\": \"6949\",\n      \"quantidade\": 69,\n      \"unidade\": \"EX\",\n      \"valorUnitario\": 8.21,\n      \"valorTotal\": 566.49\n    },\n    {\n      \"numeroProduto\": \"2\",\n      \"descricao\": \"Geografia 5 - Coleção Gosto de Saber\",\n      \"ncm\": \"49019900\",\n      \"tipoProduto\": \"Outros livros, brochuras e impressos semelhantes\",\n      \"cfop\": \"6949\",\n      \"quantidade\": 53,\n      \"unidade\": \"EX\",\n      \"valorUnitario\": 8.07,\n      \"valorTotal\": 427.71\n    }\n  ]\n}",
+          "operation": "aggregate",
+          "collection": "I2A2",
+          "query": "={{ $fromAI(\"pipeline\", \"The aggregate pipeline to fullfil the query\", \"string\",[\n  {\n    \"$match\": {\n      \"detalhes.valorNota\": { \"$exists\": true, \"$ne\": null }\n    }\n  },\n  {\n    \"$project\": {\n      \"valorNota\": \"$detalhes.valorNota\"\n    }\n  },\n  {\n    \"$sort\": {\n      \"valorNota\": -1\n    }\n  },\n  {\n    \"$limit\": 1\n  }\n]\n) }}"
+        },
+        "type": "n8n-nodes-base.mongoDbTool",
+        "typeVersion": 1.2,
+        "position": [
+          -1660,
+          -1600
+        ],
+        "id": "a708aee2-5b84-4749-a80c-6a65b828f9c7",
+        "name": "MongoDB",
+        "credentials": {
+          "mongoDb": {
+            "id": "1Ziu6D4YDtYgCX5k",
+            "name": "MongoDB account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "contextWindowLength": 3
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          -1780,
+          -1600
+        ],
+        "id": "71678052-e426-4238-be46-c65414a12ed2",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "content": "Fluxo a melhorar:\n\nAdicionar um comparador de evento mais recente para que se o campo existe, mas algum evento mais recente ocorreu na NF, o registro do banco seja atualizado para não ficar registros duplicados",
+          "height": 280,
+          "width": 500
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -2500,
+          -720
+        ],
+        "id": "4ca6cd37-6250-4ff3-b812-cdff517f74fb",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          360,
+          -1000
+        ],
+        "id": "9434f0c4-ced7-48a6-a0ca-3853e265579a",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8d6cba7e-87ef-4df2-8552-5b947eef59b5",
+                "leftValue": "={{ $json.chave }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -220,
+          -1235
+        ],
+        "id": "418c6700-e4ed-4aef-9b1c-12c14fe9a9ff",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -2120,
+          -1820
+        ],
+        "id": "86c23232-2315-41eb-8912-3a2890c0a747",
+        "name": "When chat message received",
+        "webhookId": "8aed071c-86dd-48a9-b13a-28d526e66f61"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.mongoDb",
+        "typeVersion": 1.2,
+        "position": [
+          -2300,
+          -600
+        ],
+        "id": "07a353a8-adf6-4849-af7a-cec07e48f6cc",
+        "name": "MongoDB1",
+        "credentials": {
+          "mongoDb": {
+            "id": "1Ziu6D4YDtYgCX5k",
+            "name": "MongoDB account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Bloco de download e inserção de registros no banco\n\n",
+          "height": 640,
+          "width": 3180,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -2500,
+          -1380
+        ],
+        "id": "5f5a1ac0-7bd5-4b00-a325-8ddba37e380d",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Bloco com agente IA\n\n",
+          "height": 520,
+          "width": 1100,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -2500,
+          -1920
+        ],
+        "id": "2e5d55b5-1c8d-4ea6-b48d-33653a2c533e",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.compression",
+        "typeVersion": 1.1,
+        "position": [
+          -1760,
+          -1160
+        ],
+        "id": "515c5324-2bf2-4fea-b06e-8217fe25b407",
+        "name": "Descompacta arquivos"
+      },
+      {
+        "parameters": {
+          "url": "https://drive.usercontent.google.com/u/0/uc?id=1jaNl2kL-a32HO_jXH3g3J1mGHzHWm9YD&export=download",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1980,
+          -1160
+        ],
+        "id": "494c99f5-27c9-4897-ba85-75e38d55864b",
+        "name": "Faz donwload do drive"
+      },
+      {
+        "parameters": {
+          "jsCode": "let results = [];\n\nfor (let item of items) {\n  for (let key of Object.keys(item.binary)) {\n    results.push({\n      json: {\n        fileName: item.binary[key].fileName\n      },\n      binary: {\n        data: item.binary[key]\n      }\n    });\n  }\n}\n\nreturn results;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1540,
+          -1160
+        ],
+        "id": "9648dd59-5627-4a2b-aa58-9afcd289f609",
+        "name": "Separa os arquivos"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "a57aacf8-369e-45b6-8b60-cc2d27895c94",
+                "leftValue": "={{$json[\"fileName\"]}}",
+                "rightValue": "Cabecalho",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -1320,
+          -1310
+        ],
+        "id": "3093bf32-77b6-47d6-887b-609b3e448210",
+        "name": "If - Usa arquivo com nome Cabecalho"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "a57aacf8-369e-45b6-8b60-cc2d27895c94",
+                "leftValue": "={{$json[\"fileName\"]}}",
+                "rightValue": "Itens",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -1320,
+          -1010
+        ],
+        "id": "4dc4c607-b6c1-4bf3-b3af-489b68d8b17f",
+        "name": "If - Usa arquivo com nome Itens"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          -1100,
+          -1360
+        ],
+        "id": "bce3d9d7-7ea2-4fc6-adc5-b5e67a5d753d",
+        "name": "Extrai o CSV"
+      },
+      {
+        "parameters": {
+          "options": {
+            "delimiter": ","
+          }
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          -1100,
+          -960
+        ],
+        "id": "0ece2f03-66b2-4d59-bf92-55dac1da4c71",
+        "name": "Extrai o CSV1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -1160,
+          -1160
+        ],
+        "id": "04c6c9c8-407c-4e16-baf8-2ef5bed283e7",
+        "name": "Faz nada"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          -880,
+          -1160
+        ],
+        "id": "d7b86d16-5b11-4fb7-bc26-2c4b383f311f",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "jsCode": "const allItems = items;\n\nconst file1Items = allItems.filter(i => i.json['VALOR NOTA FISCAL'] !== undefined);\nconst file2Items = allItems.filter(i => i.json['NÚMERO PRODUTO'] !== undefined);\n\nconst produtosPorChave = {};\nfor (const item of file2Items) {\n  const data = item.json;\n  const chave = data['CHAVE DE ACESSO'];\n  if (!produtosPorChave[chave]) produtosPorChave[chave] = [];\n\n  produtosPorChave[chave].push({\n    numeroProduto: data['NÚMERO PRODUTO'],\n    descricao: data['DESCRIÇÃO DO PRODUTO/SERVIÇO'],\n    ncm: data['CÓDIGO NCM/SH'],\n    tipoProduto: data['NCM/SH (TIPO DE PRODUTO)'],\n    cfop: data['CFOP'],\n    quantidade: Number(data['QUANTIDADE']),\n    unidade: data['UNIDADE'],\n    valorUnitario: parseFloat(data['VALOR UNITÁRIO']),\n    valorTotal: parseFloat(data['VALOR TOTAL'])\n  });\n}\n\nconst resultado = [];\n\nfor (const item of file1Items) {\n  const nota = item.json;\n  const chave = nota['CHAVE DE ACESSO'];\n\n  const notaFinal = {\n    chave: chave,\n    modelo: nota['MODELO'],\n    serie: nota['SÉRIE'],\n    numero: nota['NÚMERO'],\n    naturezaOperacao: nota['NATUREZA DA OPERAÇÃO'],\n    dataEmissao: nota['DATA EMISSÃO'],\n    eventoMaisRecente: nota['EVENTO MAIS RECENTE'] || null,\n    dataHoraEventoMaisRecente: nota['DATA/HORA EVENTO MAIS RECENTE'] || null,\n    emitente: {\n      cnpj: nota['CPF/CNPJ Emitente'],\n      razaoSocial: nota['RAZÃO SOCIAL EMITENTE'],\n      ie: nota['INSCRIÇÃO ESTADUAL EMITENTE'],\n      uf: nota['UF EMITENTE'],\n      municipio: nota['MUNICÍPIO EMITENTE']\n    },\n    destinatario: {\n      cnpj: nota['CNPJ DESTINATÁRIO'],\n      nome: nota['NOME DESTINATÁRIO'],\n      uf: nota['UF DESTINATÁRIO'],\n      indicadorIe: nota['INDICADOR IE DESTINATÁRIO']\n    },\n    detalhes: {\n      destinoOperacao: nota['DESTINO DA OPERAÇÃO'],\n      consumidorFinal: nota['CONSUMIDOR FINAL'],\n      presencaComprador: nota['PRESENÇA DO COMPRADOR'],\n      valorNota: parseFloat(nota['VALOR NOTA FISCAL'])\n    },\n    produtos: produtosPorChave[chave] || []\n  };\n\n  resultado.push({ json: notaFinal });\n}\n\nreturn resultado;\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -660,
+          -1160
+        ],
+        "id": "c75a28ee-eae2-4694-b4c1-bd9aa5eef609",
+        "name": "Aplica um schema"
+      },
+      {
+        "parameters": {
+          "collection": "I2A2",
+          "options": {},
+          "query": "={\n\"chave\":\"{{ $json.chave }}\"\n}\n"
+        },
+        "id": "9b1c48c6-e62f-4761-94b4-577e149978c2",
+        "name": "Find",
+        "type": "n8n-nodes-base.mongoDb",
+        "position": [
+          -440,
+          -1235
+        ],
+        "typeVersion": 1.1,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mongoDb": {
+            "id": "1Ziu6D4YDtYgCX5k",
+            "name": "MongoDB account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "fieldsToMatchString": "chave",
+          "joinMode": "keepNonMatches",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          -80,
+          -1000
+        ],
+        "id": "8816e737-c491-4d2c-ac3c-e8dd136ff3f7",
+        "name": "Merge 2"
+      },
+      {
+        "parameters": {
+          "operation": "insert",
+          "collection": "I2A2",
+          "fields": "chave,modelo,serie,numero,naturezaOperacao,dataEmissao,eventoMaisRecente,dataHoraEventoMaisRecente,emitente,destinatario,detalhes,produtos",
+          "options": {
+            "dateFields": "dataEmissao,dataHoraEventoMaisRecente"
+          }
+        },
+        "type": "n8n-nodes-base.mongoDb",
+        "typeVersion": 1.2,
+        "position": [
+          120,
+          -1000
+        ],
+        "id": "fe1f1976-52ba-4c93-a889-cd88c6b29ddf",
+        "name": "MongoDB - Insert",
+        "credentials": {
+          "mongoDb": {
+            "id": "1Ziu6D4YDtYgCX5k",
+            "name": "MongoDB account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "AI Agent": {
+        "main": [
+          []
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Faz donwload do drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MongoDB": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Merge 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Descompacta arquivos": {
+        "main": [
+          [
+            {
+              "node": "Separa os arquivos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Faz donwload do drive": {
+        "main": [
+          [
+            {
+              "node": "Descompacta arquivos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Separa os arquivos": {
+        "main": [
+          [
+            {
+              "node": "If - Usa arquivo com nome Cabecalho",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "If - Usa arquivo com nome Itens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If - Usa arquivo com nome Cabecalho": {
+        "main": [
+          [
+            {
+              "node": "Extrai o CSV",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Faz nada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If - Usa arquivo com nome Itens": {
+        "main": [
+          [
+            {
+              "node": "Extrai o CSV1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Faz nada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extrai o CSV": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extrai o CSV1": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Aplica um schema",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aplica um schema": {
+        "main": [
+          [
+            {
+              "node": "Find",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Merge 2",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Find": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge 2": {
+        "main": [
+          [
+            {
+              "node": "MongoDB - Insert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MongoDB - Insert": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "c6e6207170674daf147663e8b235a27c70e3cf4be1aa10cf47531a3314d4d5ef"
+    }
+  }
