@@ -39,12 +39,30 @@ A IA é usada **apenas no início**. Ela recebe **amostras** das planilhas e dev
 
 > Se regras mudarem, ajusta-se o **prompt/plan**; o executor continua o mesmo (evita reescrita de código).
 
-### ⚙️ Arquitetura do fluxo (alto nível)
-[Leituras das planilhas]
-├─ Amostras ─> [Agente IA – Planejamento] ─> plan.json
-└─ Dados completos ─────────────────────────┐
-├─> [Empacotar plano + dados] ─> [Executor determinístico] ─> [XLSX] 
-└────────────────────────────────────────────────────────────┘
+### 🛠️ Arquitetura do fluxo (alto nível)
+
+    +-----------------------+               +-----------------------------+
+    | Leituras das planilhas| -- amostras-> | Agente IA (Planejamento)    |
+    +-----------------------+               |  gera: plan.json            |
+                    \                       +-------------+---------------+
+                     \                                    |
+                      \-- dados completos --> +-----------v-----------+
+                                              | Agregador de dados    |
+                                              +-----------+-----------+
+                                                          |
+                                    +---------------------v----------------------+
+                                    | Empacotar (plan.json + dados completos)   |
+                                    +---------------------+----------------------+
+                                                          |
+                                    +---------------------v----------------------+
+                                    | Executor determinístico                    |
+                                    | (join, regras, cálculos)                   |
+                                    +---------------------+----------------------+
+                                                          |
+                                    +---------------------v----------------------+
+                                    | XLSX final (VR_Mensal_Final.xlsx)         |
+                                    +--------------------------------------------+
+
 
 
 ### 🧮 O que o executor faz (determinístico)
