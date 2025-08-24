@@ -1,5 +1,5 @@
 {
-  "name": "My workflow 7",
+  "name": "Desafio 4 - I2A2",
   "nodes": [
     {
       "parameters": {
@@ -514,16 +514,194 @@
     {
       "parameters": {
         "operation": "xlsx",
+        "binaryPropertyName": "VR MENSAL",
         "options": {}
       },
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        2576,
+        2608,
         1696
       ],
       "id": "6f6f459e-185b-4c81-a103-ca01e58aab24",
       "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wgV6UH26OiYDfRI8AlS_wHrt30maO5hD6hfUcTe6U68",
+          "mode": "list",
+          "cachedResultName": "VR MENSAL 05.2025",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wgV6UH26OiYDfRI8AlS_wHrt30maO5hD6hfUcTe6U68/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1022758040,
+          "mode": "list",
+          "cachedResultName": "VR MENSAL 05.2025",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wgV6UH26OiYDfRI8AlS_wHrt30maO5hD6hfUcTe6U68/edit#gid=1022758040"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Matricula": "={{ $json.Matricula }}",
+            "Admissão": "={{ $json['Admissão'] }}",
+            "Sindicato do Colaborador": "={{ $json['Sindicato do Colaborador'] }}",
+            "Competência": "={{ $json['Competência'] }}",
+            "Dias": "={{ $json.Dias }}",
+            "VALOR DIÁRIO VR": "={{ $json['VALOR DIÁRIO'] }}",
+            "TOTAL": "={{ $json['VR TOTAL'] }}",
+            "Custo empresa": "={{ $json['Custo empresa'] }}",
+            "OBS GERAL": "={{ $json['OBS GERAL'] }}",
+            "Desconto profissional": "={{ $json['Desconto profissional'] }}",
+            "uf": "={{ $json.uf }}",
+            "elegivel": "={{ $json.elegivel }}",
+            "__pendencia__": "={{ $json.__pendencia__ }}"
+          },
+          "matchingColumns": [
+            "Matricula"
+          ],
+          "schema": [
+            {
+              "id": "Matricula",
+              "displayName": "Matricula",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Admissão",
+              "displayName": "Admissão",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sindicato do Colaborador",
+              "displayName": "Sindicato do Colaborador",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competência",
+              "displayName": "Competência",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dias",
+              "displayName": "Dias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "VALOR DIÁRIO VR",
+              "displayName": "VALOR DIÁRIO VR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TOTAL",
+              "displayName": "TOTAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Custo empresa",
+              "displayName": "Custo empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Desconto profissional",
+              "displayName": "Desconto profissional",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OBS GERAL",
+              "displayName": "OBS GERAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "uf",
+              "displayName": "uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "elegivel",
+              "displayName": "elegivel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "__pendencia__",
+              "displayName": "__pendencia__",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2608,
+        1872
+      ],
+      "id": "be0d417c-f306-467d-bdea-893adff74b90",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UUSWhzqbE17BlWzt",
+          "name": "Renan - Sheets"
+        }
+      }
     }
   ],
   "pinData": {
@@ -111820,8 +111998,18 @@
             "node": "Convert to File",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
           }
         ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        []
       ]
     }
   },
@@ -111829,7 +112017,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "31c9bd5f-53cf-4129-8ae5-ebe9bfe79bd4",
+  "versionId": "6026db25-79a1-4916-ad81-4b947a69cc6e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e2e400441824b6db24f6af0c9b70e2d924e9d21f9a10e30b8b4be3b81da7dbb1"
