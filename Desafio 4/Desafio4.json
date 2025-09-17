@@ -515,12 +515,14 @@
       "parameters": {
         "operation": "xlsx",
         "binaryPropertyName": "VR MENSAL",
-        "options": {}
+        "options": {
+          "headerRow": true
+        }
       },
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        2608,
+        2688,
         1696
       ],
       "id": "6f6f459e-185b-4c81-a103-ca01e58aab24",
@@ -762,6 +764,83 @@
       ],
       "id": "61c8cbc5-8487-461d-8ce9-42b1aef140d8",
       "name": "Amostragem 8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7b190d2-c001-4ea2-be89-2650d87e4506",
+              "name": "Matricula",
+              "value": "={{ $json.Matricula }}",
+              "type": "string"
+            },
+            {
+              "id": "ea2c1fce-2679-482c-8ad6-5b9520916739",
+              "name": "Admissão",
+              "value": "={{ $json['Admissão'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7a2cb475-70f7-4fcf-be09-50303c78f546",
+              "name": "Sindicato do Colaborador",
+              "value": "={{ $json['Sindicato do Colaborador'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2ff8f0ae-fe78-4931-8007-2d0f9379907b",
+              "name": "Competência",
+              "value": "={{ $json['Competência'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6f06403d-413b-4609-8479-b39fcdd9543d",
+              "name": "Dias",
+              "value": "={{ $json.Dias }}",
+              "type": "number"
+            },
+            {
+              "id": "cadd2dd7-0349-4e07-9071-b000138b101c",
+              "name": "VALOR DIÁRIO",
+              "value": "={{ $json['VALOR DIÁRIO'] }}",
+              "type": "number"
+            },
+            {
+              "id": "a0b8191d-6f30-4800-9a85-4c655306fe32",
+              "name": "VR TOTAL",
+              "value": "={{ $json['VR TOTAL'] }}",
+              "type": "number"
+            },
+            {
+              "id": "35a94b44-fd12-4e27-86f3-99f4d706bf77",
+              "name": "Custo empresa",
+              "value": "={{ $json['Custo empresa'] }}",
+              "type": "number"
+            },
+            {
+              "id": "4e8864d1-6d6f-4a66-97ab-c0ca44b584dc",
+              "name": "Desconto profissional",
+              "value": "={{ $json['Desconto profissional'] }}",
+              "type": "number"
+            },
+            {
+              "id": "ef469f3c-18c0-481f-b92c-1ce3bbb1b2a7",
+              "name": "OBS GERAL",
+              "value": "={{ $json['OBS GERAL'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2480,
+        1696
+      ],
+      "id": "e8e2e7d1-2790-4356-9dd6-2145af60d319",
+      "name": "Edit Fields"
     }
   ],
   "pinData": {},
@@ -1138,12 +1217,12 @@
       "main": [
         [
           {
-            "node": "Convert to File",
+            "node": "Append or update row in sheet",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Append or update row in sheet",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -1192,13 +1271,29 @@
           }
         ]
       ]
+    },
+    "Convert to File": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "95d545ad-850b-41a4-8883-e117b21ca0b1",
+  "versionId": "023f6f20-43b7-4941-a44b-46a65c016fc1",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e2e400441824b6db24f6af0c9b70e2d924e9d21f9a10e30b8b4be3b81da7dbb1"
